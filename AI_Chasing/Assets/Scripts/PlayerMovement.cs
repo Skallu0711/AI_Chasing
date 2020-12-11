@@ -6,11 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private float speed = 10f;
+    
+    // movement directions
     private float horizontalMovement;
     private float verticalMovement;
+    
+    // x and y coordinates
     private float x;
     private float y;
-    public float speed = 10f;
 
     void Update()
     {
@@ -36,4 +40,5 @@ public class PlayerMovement : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
+    
 }

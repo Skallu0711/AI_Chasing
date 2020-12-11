@@ -11,27 +11,29 @@ public class EnemyAI_A : MonoBehaviour
         Idle,
         Chasing,
     }
-
-    public float normalSpeed = 2f;
-    public float chasingSpeed = 4f;
-    public float rangeOfView = 5f;
-
-    public Vector2 startingPosition;
-    public Vector2 lastSeenPlayerPosition;
-
-    public GameObject playerTarget;
-    public GameObject idleMoveTarget;
     
+    [Header("Movement")]
+    [SerializeField] private float normalSpeed = 2f;
+    [SerializeField] private float chasingSpeed = 4f;
+    [SerializeField] private float rangeOfView = 5f;
+    
+    [Header("Objects references")]
+    [SerializeField] private GameObject playerTarget;
+    [SerializeField] private GameObject waypoint;
+    
+    // position
+    private Vector2 startingPosition;
+    private Vector2 lastSeenPlayerPosition;
+    
+    // state machine reference
     private EnemyState enemyState;
-
-    public bool isChasing = false;
     
     void Start()
     {
         enemyState = EnemyState.Idle;
 
         startingPosition = transform.position;
-        idleMoveTarget.transform.position = startingPosition;
+        waypoint.transform.position = startingPosition;
         
         lastSeenPlayerPosition = Vector2.zero;
     }
@@ -42,20 +44,15 @@ public class EnemyAI_A : MonoBehaviour
         {
             case EnemyState.Idle:
                 if (Vector2.Distance(transform.position, playerTarget.transform.position) <= rangeOfView)
-                {
-                    isChasing = true;
                     Chase();
-                }
+                
 
                 enemyState = EnemyState.Chasing;
                 break;
             
             case EnemyState.Chasing:
                 if (Vector2.Distance(transform.position, playerTarget.transform.position) > rangeOfView)
-                {
-                    isChasing = false;
                     Idle();
-                }
 
                 enemyState = EnemyState.Idle;
                 break;
@@ -70,21 +67,21 @@ public class EnemyAI_A : MonoBehaviour
         if (lastSeenPlayerPosition != Vector2.zero)
         {
             //Debug.Log("going to last seen player position");
-            idleMoveTarget.transform.position = lastSeenPlayerPosition;
+            waypoint.transform.position = lastSeenPlayerPosition;
             startingPosition = lastSeenPlayerPosition;
             lastSeenPlayerPosition = Vector2.zero; // after going to the last seen player position we gonna continue generating new points from that position, so it has to become 0
         }
         
-        FaceTarget(idleMoveTarget);
-        transform.position = Vector2.MoveTowards(transform.position, idleMoveTarget.transform.position, normalSpeed * Time.deltaTime);
+        FaceTarget(waypoint);
+        transform.position = Vector2.MoveTowards(transform.position, waypoint.transform.position, normalSpeed * Time.deltaTime);
 
         // change target position within range of view radius
-        if (transform.position == idleMoveTarget.transform.position)
+        if (transform.position == waypoint.transform.position)
         {
             float x = Random.Range(startingPosition.x - rangeOfView, startingPosition.x + rangeOfView);
             float y = Random.Range(startingPosition.y - rangeOfView, startingPosition.y + rangeOfView);
             
-            idleMoveTarget.transform.position = new Vector2(x,y);
+            waypoint.transform.position = new Vector2(x,y);
         }
     }
 

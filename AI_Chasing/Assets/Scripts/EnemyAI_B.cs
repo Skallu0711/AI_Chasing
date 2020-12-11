@@ -10,21 +10,24 @@ public class EnemyAI_B : MonoBehaviour
         Idle,
         Chasing,
     }
-
-    public float normalSpeed = 2f;
-    public float chasingSpeed = 4f;
-    public float rangeOfView = 5f;
     
+    [Header("Movement")]
+    [SerializeField] private float normalSpeed = 2f;
+    [SerializeField] private float chasingSpeed = 4f;
+    [SerializeField] private float rangeOfView = 5f;
+    
+    [Header("Target reference")]
+    [SerializeField] private GameObject playerTarget;
+    
+    // waypoints reference
     private Waypoints waypoints;
     private int waypointIndex;
+
+    // position
+    private Vector2 lastPosition;
     
-    public GameObject playerTarget;
-    
-    public Vector2 lastPosition;
-    
+    // state machine reference
     private EnemyState enemyState;
-    
-    public bool isChasing = false;
 
     void Start()
     {
@@ -41,10 +44,7 @@ public class EnemyAI_B : MonoBehaviour
         {
             case EnemyState.Idle:
                 if (Vector2.Distance(transform.position, playerTarget.transform.position) <= rangeOfView)
-                {
-                    isChasing = true;
                     Chase();
-                }
 
                 enemyState = EnemyState.Chasing;
                 break;
@@ -52,8 +52,6 @@ public class EnemyAI_B : MonoBehaviour
             case EnemyState.Chasing:
                 if (Vector2.Distance(transform.position, playerTarget.transform.position) > rangeOfView)
                 {
-                    isChasing = false;
-                    
                     // return to the last position
                     Vector2 direction = new Vector2(lastPosition.x - transform.position.x, lastPosition.y - transform.position.y);
                     transform.up = direction;

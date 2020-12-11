@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerShoot : MonoBehaviour
 {
-    public float range = 10f;
-
+    
+    [SerializeField] private float range = 10f;
+    [SerializeField] private LineRenderer lineRenderer;
+    
     private Vector3 mousePosition;
     private Vector3 direction;
-
-    public LineRenderer lineRenderer;
     
     void Start()
     {
